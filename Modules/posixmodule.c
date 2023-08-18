@@ -543,6 +543,11 @@ extern char        *ctermid_r(char *);
 #  include <sys/eventfd.h>
 #endif
 
+/* timerfd_create() */
+#ifdef HAVE_SYS_TIMERFD_H
+#  include <sys/timerfd.h>
+#endif
+
 #ifdef _Py_MEMORY_SANITIZER
 #  include <sanitizer/msan_interface.h>
 #endif
@@ -10014,6 +10019,112 @@ os_times_impl(PyObject *module)
 #endif /* HAVE_TIMES */
 
 
+#if defined(HAVE_TIMERFD_CREATE) && defined(EFD_CLOEXEC)
+
+static PyObject *
+build_itimerspec(const struct itimerspec* curr_value)
+{
+    PyObject *value = PyDict_New();
+    if (value == NULL)
+        return NULL;
+
+    PyObject *it_interval = PyDict_New();
+    if (it_interval == NULL) {
+        Py_DECREF(value);
+        return NULL;
+    }
+
+    PyObject *it_value = PyDict_New();
+    if (it_value == NULL) {
+        Py_DECREF(value);
+        Py_DECREF(it_value);
+        return NULL;
+    }
+
+    PyDict_SetItemString(it_interval, "tv_sec", PyLong_FromLongLong(curr_value->it_interval.tv_sec));
+    PyDict_SetItemString(it_interval, "tv_nsec", PyLong_FromLong(curr_value->it_interval.tv_nsec));
+
+    PyDict_SetItemString(it_value, "tv_sec", PyLong_FromLongLong(curr_value->it_value.tv_sec));
+    PyDict_SetItemString(it_value, "tv_nsec", PyLong_FromLong(curr_value->it_value.tv_nsec));
+    return value;
+}
+
+
+/*[clinic input]
+os.timerfd_create
+
+    clockid: int
+    flags: int
+
+Creates and returns an timerfd notification file descriptor.
+[clinic start generated code]*/
+
+static PyObject *
+os_timerfd_create_impl(PyObject *module, int clockid, int flags)
+/*[clinic end generated code: output=1caae80fb168004a input=9ebed3e587e2ccd6]*/
+
+{
+    int fd;
+    Py_BEGIN_ALLOW_THREADS
+    fd = timerfd_create(clockid, flags);
+    Py_END_ALLOW_THREADS
+    if (fd == -1) {
+        return PyErr_SetFromErrno(PyExc_OSError);
+    }
+    return PyLong_FromLong(fd);
+}
+
+/*[clinic input]
+os.timerfd_gettime
+
+    fd: fildes
+
+Read timerfd value
+[clinic start generated code]*/
+
+static PyObject *
+os_timerfd_gettime_impl(PyObject *module, int fd)
+/*[clinic end generated code: output=ec5a94a66cfe6ab4 input=445898167bb0e0eb]*/
+{
+    struct itimerspec curr_value;
+    int result;
+    Py_BEGIN_ALLOW_THREADS
+    result = timerfd_gettime(fd, &curr_value);
+    Py_END_ALLOW_THREADS
+    if (result == -1) {
+        return PyErr_SetFromErrno(PyExc_OSError);
+    }
+    return build_itimerspec(&curr_value);
+}
+
+/*[clinic input]
+os.timerfd_settime
+
+    fd: fildes
+    flags: int
+    value: unsigned_long_long
+
+Write timerfd value.
+[clinic start generated code]*/
+
+static PyObject *
+os_timerfd_settime_impl(PyObject *module, int fd, int flags,
+                        unsigned long long value)
+/*[clinic end generated code: output=3badc55a0bd739c3 input=36313f4dea76657d]*/
+{
+    struct itimerspec new_value;
+    struct itimerspec old_value;
+    int result;
+    Py_BEGIN_ALLOW_THREADS
+    result = timerfd_settime(fd, flags, &new_value, &old_value);
+    Py_END_ALLOW_THREADS
+    if (result == -1) {
+        return PyErr_SetFromErrno(PyExc_OSError);
+    }
+    Py_RETURN_NONE;
+}
+#endif  /* HAVE_TIMERFD_CREATE && EFD_CLOEXEC */
+
 #ifdef HAVE_GETSID
 /*[clinic input]
 os.getsid
@@ -15920,6 +16031,9 @@ static PyMethodDef posix_methods[] = {
     OS_WAITSTATUS_TO_EXITCODE_METHODDEF
     OS_SETNS_METHODDEF
     OS_UNSHARE_METHODDEF
+    OS_TIMERFD_CREATE_METHODDEF
+    OS_TIMERFD_SETTIME_METHODDEF
+    OS_TIMERFD_GETTIME_METHODDEF
 
     OS__PATH_ISDEVDRIVE_METHODDEF
     OS__PATH_ISDIR_METHODDEF
@@ -16631,6 +16745,16 @@ static const struct have_function {
 
 #ifdef HAVE_EVENTFD
     {"HAVE_EVENTFD", NULL},
+#endif
+
+#ifdef HAVE_TIMERFD_CREATE
+    {"HAVE_TIMERFD_CREATE", NULL},
+#endif
+#ifdef HAVE_TIMERFD_SETTIME
+    {"HAVE_TIMERFD_SETTIME", NULL},
+#endif
+#ifdef HAVE_TIMERFD_GETTIME
+    {"HAVE_TIMERFD_GETTIME", NULL},
 #endif
 
 #ifdef HAVE_FACCESSAT
