@@ -3939,6 +3939,11 @@ class TimerfdTests(unittest.TestCase):
         self.assertEqual(interval_sec2, interval_sec)
         self.assertEqual(interval_nsec2, interval_nsec)
 
+        # timerfd_gettime
+        interval_sec2, interval_nsec2, value_sec2, value_nsec2 = os.timerfd_gettime(fd)
+        self.assertEqual(interval_sec2, interval_sec)
+        self.assertEqual(interval_nsec2, interval_nsec)
+
         value  = value_sec * one_sec_in_nsec + value_nsec
         value2 = value_sec2 * one_sec_in_nsec + value_nsec2
         self.assertLess(abs(value2 - value),  limit_error)
@@ -3954,6 +3959,11 @@ class TimerfdTests(unittest.TestCase):
         interval_sec, interval_nsec = 0, one_sec_in_nsec // 2
         value_sec, value_nsec = 1, 0
         _, _, _, _ = os.timerfd_settime(fd, 0, interval_sec, interval_nsec, value_sec, value_nsec)
+
+        # timerfd_gettime
+        interval_sec2, interval_nsec2, value_sec2, value_nsec2 = os.timerfd_gettime(fd)
+        self.assertEqual(interval_sec2, interval_sec)
+        self.assertEqual(interval_nsec2, interval_nsec)
 
         count = 3
         t = time.perf_counter_ns()
