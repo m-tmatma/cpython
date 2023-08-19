@@ -10019,36 +10019,19 @@ os_times_impl(PyObject *module)
 #endif /* HAVE_TIMES */
 
 
-#if defined(HAVE_TIMERFD_CREATE) && defined(EFD_CLOEXEC)
+#if defined(HAVE_TIMERFD_CREATE)
 
 static PyObject *
 build_itimerspec(const struct itimerspec* curr_value)
 {
-    PyObject *value = PyDict_New();
-    if (value == NULL)
-        return NULL;
-
-    PyObject *it_interval = PyDict_New();
-    if (it_interval == NULL) {
-        Py_DECREF(value);
-        return NULL;
-    }
-
-    PyObject *it_value = PyDict_New();
-    if (it_value == NULL) {
-        Py_DECREF(value);
-        Py_DECREF(it_value);
-        return NULL;
-    }
-
-    PyDict_SetItemString(it_interval, "tv_sec", PyLong_FromLongLong(curr_value->it_interval.tv_sec));
-    PyDict_SetItemString(it_interval, "tv_nsec", PyLong_FromLong(curr_value->it_interval.tv_nsec));
-
-    PyDict_SetItemString(it_value, "tv_sec", PyLong_FromLongLong(curr_value->it_value.tv_sec));
-    PyDict_SetItemString(it_value, "tv_nsec", PyLong_FromLong(curr_value->it_value.tv_nsec));
-    return value;
+    return PyTuple_Pack(
+        4,
+        PyLong_FromLongLong(curr_value->it_interval.tv_sec),
+        PyLong_FromLong(curr_value->it_interval.tv_nsec),
+        PyLong_FromLongLong(curr_value->it_value.tv_sec),
+        PyLong_FromLong(curr_value->it_value.tv_nsec)
+    );
 }
-
 
 /*[clinic input]
 os.timerfd_create
@@ -10102,28 +10085,37 @@ os.timerfd_settime
 
     fd: fildes
     flags: int
-    value: unsigned_long_long
+    it_interval_tv_sec: long_long
+    it_interval_tv_nsec: long
+    it_value_tv_sec: long_long
+    it_value_tv_nsec: long
 
 Write timerfd value.
 [clinic start generated code]*/
 
 static PyObject *
 os_timerfd_settime_impl(PyObject *module, int fd, int flags,
-                        unsigned long long value)
-/*[clinic end generated code: output=3badc55a0bd739c3 input=36313f4dea76657d]*/
+                        long long it_interval_tv_sec,
+                        long it_interval_tv_nsec, long long it_value_tv_sec,
+                        long it_value_tv_nsec)
+/*[clinic end generated code: output=107be95088af7ea0 input=3b289f65db4303b6]*/
 {
     struct itimerspec new_value;
     struct itimerspec old_value;
     int result;
+    new_value.it_interval.tv_sec = it_interval_tv_sec;
+    new_value.it_interval.tv_nsec = it_interval_tv_nsec;
+    new_value.it_value.tv_sec = it_value_tv_sec;
+    new_value.it_value.tv_nsec = it_value_tv_nsec;
     Py_BEGIN_ALLOW_THREADS
     result = timerfd_settime(fd, flags, &new_value, &old_value);
     Py_END_ALLOW_THREADS
     if (result == -1) {
         return PyErr_SetFromErrno(PyExc_OSError);
     }
-    Py_RETURN_NONE;
+    return build_itimerspec(&old_value);
 }
-#endif  /* HAVE_TIMERFD_CREATE && EFD_CLOEXEC */
+#endif  /* HAVE_TIMERFD_CREATE */
 
 #ifdef HAVE_GETSID
 /*[clinic input]

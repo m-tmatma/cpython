@@ -5986,7 +5986,7 @@ os_times(PyObject *module, PyObject *Py_UNUSED(ignored))
 
 #endif /* defined(HAVE_TIMES) */
 
-#if (defined(HAVE_TIMERFD_CREATE) && defined(EFD_CLOEXEC))
+#if defined(HAVE_TIMERFD_CREATE)
 
 PyDoc_STRVAR(os_timerfd_create__doc__,
 "timerfd_create($module, /, clockid, flags)\n"
@@ -6051,9 +6051,9 @@ exit:
     return return_value;
 }
 
-#endif /* (defined(HAVE_TIMERFD_CREATE) && defined(EFD_CLOEXEC)) */
+#endif /* defined(HAVE_TIMERFD_CREATE) */
 
-#if (defined(HAVE_TIMERFD_CREATE) && defined(EFD_CLOEXEC))
+#if defined(HAVE_TIMERFD_CREATE)
 
 PyDoc_STRVAR(os_timerfd_gettime__doc__,
 "timerfd_gettime($module, /, fd)\n"
@@ -6112,12 +6112,13 @@ exit:
     return return_value;
 }
 
-#endif /* (defined(HAVE_TIMERFD_CREATE) && defined(EFD_CLOEXEC)) */
+#endif /* defined(HAVE_TIMERFD_CREATE) */
 
-#if (defined(HAVE_TIMERFD_CREATE) && defined(EFD_CLOEXEC))
+#if defined(HAVE_TIMERFD_CREATE)
 
 PyDoc_STRVAR(os_timerfd_settime__doc__,
-"timerfd_settime($module, /, fd, flags, value)\n"
+"timerfd_settime($module, /, fd, flags, it_interval_tv_sec,\n"
+"                it_interval_tv_nsec, it_value_tv_sec, it_value_tv_nsec)\n"
 "--\n"
 "\n"
 "Write timerfd value.");
@@ -6127,7 +6128,9 @@ PyDoc_STRVAR(os_timerfd_settime__doc__,
 
 static PyObject *
 os_timerfd_settime_impl(PyObject *module, int fd, int flags,
-                        unsigned long long value);
+                        long long it_interval_tv_sec,
+                        long it_interval_tv_nsec, long long it_value_tv_sec,
+                        long it_value_tv_nsec);
 
 static PyObject *
 os_timerfd_settime(PyObject *module, PyObject *const *args, Py_ssize_t nargs, PyObject *kwnames)
@@ -6135,14 +6138,14 @@ os_timerfd_settime(PyObject *module, PyObject *const *args, Py_ssize_t nargs, Py
     PyObject *return_value = NULL;
     #if defined(Py_BUILD_CORE) && !defined(Py_BUILD_CORE_MODULE)
 
-    #define NUM_KEYWORDS 3
+    #define NUM_KEYWORDS 6
     static struct {
         PyGC_Head _this_is_not_used;
         PyObject_VAR_HEAD
         PyObject *ob_item[NUM_KEYWORDS];
     } _kwtuple = {
         .ob_base = PyVarObject_HEAD_INIT(&PyTuple_Type, NUM_KEYWORDS)
-        .ob_item = { &_Py_ID(fd), &_Py_ID(flags), &_Py_ID(value), },
+        .ob_item = { &_Py_ID(fd), &_Py_ID(flags), &_Py_ID(it_interval_tv_sec), &_Py_ID(it_interval_tv_nsec), &_Py_ID(it_value_tv_sec), &_Py_ID(it_value_tv_nsec), },
     };
     #undef NUM_KEYWORDS
     #define KWTUPLE (&_kwtuple.ob_base.ob_base)
@@ -6151,19 +6154,22 @@ os_timerfd_settime(PyObject *module, PyObject *const *args, Py_ssize_t nargs, Py
     #  define KWTUPLE NULL
     #endif  // !Py_BUILD_CORE
 
-    static const char * const _keywords[] = {"fd", "flags", "value", NULL};
+    static const char * const _keywords[] = {"fd", "flags", "it_interval_tv_sec", "it_interval_tv_nsec", "it_value_tv_sec", "it_value_tv_nsec", NULL};
     static _PyArg_Parser _parser = {
         .keywords = _keywords,
         .fname = "timerfd_settime",
         .kwtuple = KWTUPLE,
     };
     #undef KWTUPLE
-    PyObject *argsbuf[3];
+    PyObject *argsbuf[6];
     int fd;
     int flags;
-    unsigned long long value;
+    long long it_interval_tv_sec;
+    long it_interval_tv_nsec;
+    long long it_value_tv_sec;
+    long it_value_tv_nsec;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 3, 3, 0, argsbuf);
+    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 6, 6, 0, argsbuf);
     if (!args) {
         goto exit;
     }
@@ -6174,16 +6180,29 @@ os_timerfd_settime(PyObject *module, PyObject *const *args, Py_ssize_t nargs, Py
     if (flags == -1 && PyErr_Occurred()) {
         goto exit;
     }
-    if (!_PyLong_UnsignedLongLong_Converter(args[2], &value)) {
+    it_interval_tv_sec = PyLong_AsLongLong(args[2]);
+    if (it_interval_tv_sec == -1 && PyErr_Occurred()) {
         goto exit;
     }
-    return_value = os_timerfd_settime_impl(module, fd, flags, value);
+    it_interval_tv_nsec = PyLong_AsLong(args[3]);
+    if (it_interval_tv_nsec == -1 && PyErr_Occurred()) {
+        goto exit;
+    }
+    it_value_tv_sec = PyLong_AsLongLong(args[4]);
+    if (it_value_tv_sec == -1 && PyErr_Occurred()) {
+        goto exit;
+    }
+    it_value_tv_nsec = PyLong_AsLong(args[5]);
+    if (it_value_tv_nsec == -1 && PyErr_Occurred()) {
+        goto exit;
+    }
+    return_value = os_timerfd_settime_impl(module, fd, flags, it_interval_tv_sec, it_interval_tv_nsec, it_value_tv_sec, it_value_tv_nsec);
 
 exit:
     return return_value;
 }
 
-#endif /* (defined(HAVE_TIMERFD_CREATE) && defined(EFD_CLOEXEC)) */
+#endif /* defined(HAVE_TIMERFD_CREATE) */
 
 #if defined(HAVE_GETSID)
 
@@ -12201,4 +12220,4 @@ exit:
 #ifndef OS_WAITSTATUS_TO_EXITCODE_METHODDEF
     #define OS_WAITSTATUS_TO_EXITCODE_METHODDEF
 #endif /* !defined(OS_WAITSTATUS_TO_EXITCODE_METHODDEF) */
-/*[clinic end generated code: output=552ebf9d61760fb3 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=78bad3cda8f58ed4 input=a9049054013a1b77]*/
