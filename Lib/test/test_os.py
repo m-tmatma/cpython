@@ -3918,7 +3918,7 @@ class EventfdTests(unittest.TestCase):
 @unittest.skipUnless(hasattr(os, 'timerfd_create'), 'requires os.timerfd_create')
 @support.requires_linux_version(2, 6, 30)
 class TimerfdTests(unittest.TestCase):
-    def test_timerfd_initval(self):
+    def test_timerfd_ns_initval(self):
         one_sec_in_nsec = 10**9
         limit_error = 10**6
         fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
@@ -3926,29 +3926,25 @@ class TimerfdTests(unittest.TestCase):
         self.addCleanup(os.close, fd)
 
         # 1st call
-        interval_sec, interval_nsec = 0, one_sec_in_nsec // 1000
-        value_sec, value_nsec = 0, 0
-        interval_sec2, interval_nsec2, value_sec2, value_nsec2 = os.timerfd_settime(fd, 0, interval_sec, interval_nsec, value_sec, value_nsec)
-        self.assertEqual(interval_sec2, 0)
-        self.assertEqual(interval_nsec2, 0)
-        self.assertEqual(value_sec2, 0)
-        self.assertEqual(value_nsec2, 0)
+        interval_ns = one_sec_in_nsec // 1000
+        value_ns = 0
+        interval_ns2, value_ns2 = os.timerfd_settime_ns(fd, 0, interval_ns, value_ns)
+        self.assertEqual(interval_ns2, 0)
+        self.assertEqual(value_ns2, 0)
 
         # 2nd call
-        interval_sec2, interval_nsec2, value_sec2, value_nsec2 = os.timerfd_settime(fd, 0, interval_sec, interval_nsec, value_sec, value_nsec)
-        self.assertEqual(interval_sec2, interval_sec)
-        self.assertEqual(interval_nsec2, interval_nsec)
+        interval_ns2, value_ns2 = os.timerfd_settime_ns(fd, 0, interval_ns, value_ns)
+        self.assertEqual(interval_ns2, interval_ns)
+        self.assertEqual(value_ns2, value_ns)
 
         # timerfd_gettime
-        interval_sec2, interval_nsec2, value_sec2, value_nsec2 = os.timerfd_gettime(fd)
-        self.assertEqual(interval_sec2, interval_sec)
-        self.assertEqual(interval_nsec2, interval_nsec)
+        interval_ns2, value_ns2 = os.timerfd_gettime_ns(fd)
+        self.assertEqual(interval_ns2, interval_ns)
+        self.assertLessEqual(value_ns2, value_ns)
 
-        value  = value_sec * one_sec_in_nsec + value_nsec
-        value2 = value_sec2 * one_sec_in_nsec + value_nsec2
-        self.assertLess(abs(value2 - value),  limit_error)
+        self.assertLess(abs(value_ns2 - value_ns),  limit_error)
 
-    def test_timerfd_interval(self):
+    def test_timerfd_ns_interval(self):
         size = 8  # read/write 8 bytes
         one_sec_in_nsec = 10**9
         limit_error = 10**6
@@ -3956,14 +3952,17 @@ class TimerfdTests(unittest.TestCase):
         self.assertNotEqual(fd, -1)
         self.addCleanup(os.close, fd)
 
-        interval_sec, interval_nsec = 0, one_sec_in_nsec // 2
-        value_sec, value_nsec = 1, 0
-        _, _, _, _ = os.timerfd_settime(fd, 0, interval_sec, interval_nsec, value_sec, value_nsec)
+        # 0.5 second
+        interval_ns = one_sec_in_nsec // 2
+        # 1 second
+        value_ns = one_sec_in_nsec
+
+        _, _ = os.timerfd_settime_ns(fd, 0, interval_ns, value_ns)
 
         # timerfd_gettime
-        interval_sec2, interval_nsec2, value_sec2, value_nsec2 = os.timerfd_gettime(fd)
-        self.assertEqual(interval_sec2, interval_sec)
-        self.assertEqual(interval_nsec2, interval_nsec)
+        interval_ns2, value_ns2 = os.timerfd_gettime_ns(fd)
+        self.assertEqual(interval_ns2, interval_ns)
+        self.assertLessEqual(value_ns2, value_ns)
 
         count = 3
         t = time.perf_counter_ns()
@@ -3971,10 +3970,8 @@ class TimerfdTests(unittest.TestCase):
             _ = os.read(fd, size)
         t = time.perf_counter_ns() - t
 
-        value = value_sec * one_sec_in_nsec + value_nsec
-        interval = interval_sec * one_sec_in_nsec + interval_nsec
-        total_time = value + interval * (count - 1)
-        self.assertLess(abs(t - total_time),  limit_error)
+        total_time_ns = value_ns + interval_ns * (count - 1)
+        self.assertLess(abs(t - total_time_ns),  limit_error)
 
 
 class OSErrorTests(unittest.TestCase):
