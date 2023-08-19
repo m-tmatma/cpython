@@ -16347,6 +16347,9 @@ all_ins(PyObject *m)
 #ifdef TFD_CLOEXEC
     if (PyModule_AddIntMacro(m, TFD_CLOEXEC)) return -1;
 #endif
+#ifdef TFD_TIMER_ABSTIME
+    if (PyModule_AddIntMacro(m, TFD_TIMER_ABSTIME)) return -1;
+#endif
 
     /* constants for posix_fadvise */
 #ifdef POSIX_FADV_NORMAL
