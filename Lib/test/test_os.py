@@ -3919,14 +3919,14 @@ class EventfdTests(unittest.TestCase):
 @support.requires_linux_version(2, 6, 30)
 class TimerfdTests(unittest.TestCase):
     def test_timerfd_initval(self):
-        nanosec = 1000 * 1000 * 1000
-        limit_error = 1000 * 1000
+        one_sec_in_nsec = 10**9
+        limit_error = 10**6
         fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
         self.assertNotEqual(fd, -1)
         self.addCleanup(os.close, fd)
 
         # 1st call
-        interval_sec, interval_nsec = 0, nanosec // 1000
+        interval_sec, interval_nsec = 0, one_sec_in_nsec // 1000
         value_sec, value_nsec = 0, 0
         interval_sec2, interval_nsec2, value_sec2, value_nsec2 = os.timerfd_settime(fd, 0, interval_sec, interval_nsec, value_sec, value_nsec)
         self.assertEqual(interval_sec2, 0)
@@ -3938,17 +3938,17 @@ class TimerfdTests(unittest.TestCase):
         interval_sec2, interval_nsec2, value_sec2, value_nsec2 = os.timerfd_settime(fd, 0, interval_sec, interval_nsec, value_sec, value_nsec)
         self.assertEqual(interval_sec2, interval_sec)
         self.assertEqual(interval_nsec2, interval_nsec)
-        self.assertLess(abs( (value_sec2 * nanosec + value_nsec2) - (value_sec * nanosec + value_nsec)),  limit_error)
+        self.assertLess(abs( (value_sec2 * one_sec_in_nsec + value_nsec2) - (value_sec * one_sec_in_nsec + value_nsec)),  limit_error)
 
     def test_timerfd_interval(self):
         size = 8  # read/write 8 bytes
-        nanosec = 1000 * 1000 * 1000
-        limit_error = 1000 * 1000
+        one_sec_in_nsec = 10**9
+        limit_error = 10**6
         fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
         self.assertNotEqual(fd, -1)
         self.addCleanup(os.close, fd)
 
-        interval_sec, interval_nsec = 0, nanosec // 2
+        interval_sec, interval_nsec = 0, one_sec_in_nsec // 2
         value_sec, value_nsec = 1, 0
         _, _, _, _ = os.timerfd_settime(fd, 0, interval_sec, interval_nsec, value_sec, value_nsec)
 
@@ -3958,7 +3958,7 @@ class TimerfdTests(unittest.TestCase):
             _ = os.read(fd, size)
         t = time.perf_counter_ns() - t
 
-        total_time = (value_sec * nanosec + value_nsec) +  (interval_sec * nanosec + interval_nsec) * (count - 1)
+        total_time = (value_sec * one_sec_in_nsec + value_nsec) +  (interval_sec * one_sec_in_nsec + interval_nsec) * (count - 1)
         self.assertLess(abs(t - total_time),  limit_error)
 
 
