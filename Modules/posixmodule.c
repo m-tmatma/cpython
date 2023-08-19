@@ -16341,6 +16341,13 @@ all_ins(PyObject *m)
     if (PyModule_AddIntMacro(m, SF_NOCACHE)) return -1;
 #endif
 
+#ifdef TFD_NONBLOCK
+    if (PyModule_AddIntMacro(m, TFD_NONBLOCK)) return -1;
+#endif
+#ifdef TFD_CLOEXEC
+    if (PyModule_AddIntMacro(m, TFD_CLOEXEC)) return -1;
+#endif
+
     /* constants for posix_fadvise */
 #ifdef POSIX_FADV_NORMAL
     if (PyModule_AddIntMacro(m, POSIX_FADV_NORMAL)) return -1;
