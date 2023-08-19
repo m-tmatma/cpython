@@ -3938,7 +3938,10 @@ class TimerfdTests(unittest.TestCase):
         interval_sec2, interval_nsec2, value_sec2, value_nsec2 = os.timerfd_settime(fd, 0, interval_sec, interval_nsec, value_sec, value_nsec)
         self.assertEqual(interval_sec2, interval_sec)
         self.assertEqual(interval_nsec2, interval_nsec)
-        self.assertLess(abs( (value_sec2 * one_sec_in_nsec + value_nsec2) - (value_sec * one_sec_in_nsec + value_nsec)),  limit_error)
+
+        value  = value_sec * one_sec_in_nsec + value_nsec
+        value2 = value_sec2 * one_sec_in_nsec + value_nsec2
+        self.assertLess(abs(value2 - value),  limit_error)
 
     def test_timerfd_interval(self):
         size = 8  # read/write 8 bytes
@@ -3958,7 +3961,9 @@ class TimerfdTests(unittest.TestCase):
             _ = os.read(fd, size)
         t = time.perf_counter_ns() - t
 
-        total_time = (value_sec * one_sec_in_nsec + value_nsec) +  (interval_sec * one_sec_in_nsec + interval_nsec) * (count - 1)
+        value = value_sec * one_sec_in_nsec + value_nsec
+        interval = interval_sec * one_sec_in_nsec + interval_nsec
+        total_time = value + interval * (count - 1)
         self.assertLess(abs(t - total_time),  limit_error)
 
 
