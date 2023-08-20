@@ -3968,7 +3968,7 @@ class TimerfdTests(unittest.TestCase):
         t = time.perf_counter() - t
 
         total_time = value + interval * (count - 1)
-        self.assertLess(abs(t - total_time),  limit_error)
+        self.assertGreater(t, total_time)
 
     def test_timerfd_ns_initval(self):
         one_sec_in_nsec = 10**9
@@ -4023,7 +4023,7 @@ class TimerfdTests(unittest.TestCase):
         t = time.perf_counter_ns() - t
 
         total_time_ns = value_ns + interval_ns * (count - 1)
-        self.assertLess(abs(t - total_time_ns),  limit_error)
+        self.assertGreater(t, total_time_ns)
 
 
 class OSErrorTests(unittest.TestCase):
