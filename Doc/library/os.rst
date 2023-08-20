@@ -3852,11 +3852,11 @@ features:
    Start/stop timer for an timerfd file descriptor.
    See man page :manpage:`timerfd_settime(2)` for more information.
 
-   `interval` coresponds to `it_interval` in `struct itimerspec` and `value` coresponds to
-   `it_value` in `struct itimerspec`. They are both in seconds unit and types are double.
+   ``interval`` coresponds to ``it_interval`` in ``struct itimerspec`` and `value`` coresponds to
+   `it_value` in ``struct itimerspec``. They are both in seconds unit and types are double.
 
-   `interval` is calculated like `it_interval.tv_sec + it_interval.tv_nsec * 1e-9`,
-   `value` is calculated like `it_interval.tv_sec + it_interval.tv_nsec * 1e-9` internally.
+   ``interval`` is calculated like ``it_interval.tv_sec + it_interval.tv_nsec * 1e-9``,
+   ``value`` is calculated like `it_interval.tv_sec + it_interval.tv_nsec * 1e-9` internally.
 
    .. availability:: Linux >= 2.6.27 with glibc >= 2.8
 
@@ -3869,11 +3869,11 @@ features:
    Start/stop timer for an timerfd file descriptor.
    See man page :manpage:`timerfd_settime(2)` for more information.
 
-   `interval_ns` coresponds to `it_interval` in `struct itimerspec` and `value_ns` coresponds to
-   `it_value` in `struct itimerspec`. They are both in nano second unit and types are long long.
+   ``interval_ns`` coresponds to ``it_interval`` in ``struct itimerspec`` and ``value_ns`` coresponds to
+   ``it_value`` in ``struct itimerspec``. They are both in nano second unit and types are long long.
 
-   `interval` is calculated like `it_interval.tv_sec * 10**9 + it_interval.tv_nsec`,
-   `value` is calculated like `it_interval.tv_sec * 10**9 + it_interval.tv_nsec` internally.
+   ``interval`` is calculated like ``it_interval.tv_sec * 10**9 + it_interval.tv_nsec``,
+   ``value`` is calculated like ``it_interval.tv_sec * 10**9 + it_interval.tv_nsec`` internally.
 
    .. availability:: Linux >= 2.6.27 with glibc >= 2.8
 
@@ -3882,14 +3882,14 @@ features:
 
 .. function:: timerfd_gettime(fd)
 
-   Returns a tuple `interval` which and `value` which is the time until next expiration.
+   Returns a tuple ``interval`` which and `value` which is the time until next expiration.
    See man page :manpage:`timerfd_gettime(2)` for more information.
 
-   `interval` coresponds to `it_interval` in `struct itimerspec` and `value` coresponds to
-   `it_value` in `struct itimerspec`. They are both in seconds unit and types are double.
+   ``interval`` coresponds to ``it_interval`` in ``struct itimerspec`` and ``value`` coresponds to
+   ``it_value`` in ``struct itimerspec``. They are both in seconds unit and types are double.
 
-   `interval` is calculated like `it_interval.tv_sec + it_interval.tv_nsec * 1e-9`,
-   `value` is calculated like `it_interval.tv_sec + it_interval.tv_nsec * 1e-9` internally.
+   ``interval`` is calculated like ``it_interval.tv_sec + it_interval.tv_nsec * 1e-9``,
+   ``value`` is calculated like ``it_interval.tv_sec + it_interval.tv_nsec * 1e-9`` internally.
 
    .. availability:: Linux >= 2.6.27 with glibc >= 2.8
 
@@ -3898,14 +3898,14 @@ features:
 
 .. function:: timerfd_gettime_ns(fd)
 
-   Returns a tuple `interval` which and `value` which is the time until next expiration.
+   Returns a tuple ``interval`` which and `value` which is the time until next expiration.
    See man page :manpage:`timerfd_gettime(2)` for more information.
 
-   `interval` coresponds to `it_interval` in `struct itimerspec` and `value` coresponds to
-   `it_value` in `struct itimerspec`. They are both in nano second unit and types are long long.
+   ``interval`` coresponds to ``it_interval`` in ``struct itimerspec`` and ``value`` coresponds to
+   ``it_value`` in ``struct itimerspec``. They are both in nano second unit and types are long long.
 
-   `interval` is calculated like `it_interval.tv_sec * 10**9 + it_interval.tv_nsec`,
-   `value` is calculated like `it_interval.tv_sec * 10**9 + it_interval.tv_nsec` internally.
+   ``interval`` is calculated like ``it_interval.tv_sec * 10**9 + it_interval.tv_nsec``,
+   ``value`` is calculated like ``it_interval.tv_sec * 10**9 + it_interval.tv_nsec`` internally.
 
    .. availability:: Linux >= 2.6.27 with glibc >= 2.8
 
