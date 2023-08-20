@@ -3867,7 +3867,7 @@ features:
 .. function:: timerfd_settime_ns(fd, flags, interval_ns, value_ns)
 
    Start/stop timer for an timerfd file descriptor.
-   See man page manpage:`timerfd_settime(2)` for more information.
+   See man page :manpage:`timerfd_settime(2)` for more information.
 
    `interval_ns` coresponds to `it_interval` in `struct itimerspec` and `value_ns` coresponds to
    `it_value` in `struct itimerspec`. They are both in nano second unit and types are long long.
