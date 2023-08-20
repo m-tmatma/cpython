@@ -3852,7 +3852,7 @@ features:
    Start/stop timer for an timerfd file descriptor.
    See man page :manpage:`timerfd_settime(2)` for more information.
 
-   ``interval`` coresponds to ``it_interval`` in ``struct itimerspec`` and `value`` coresponds to
+   ``interval`` coresponds to ``it_interval`` in ``struct itimerspec`` and ``value`` coresponds to
    `it_value` in ``struct itimerspec``. They are both in seconds unit and types are double.
 
    ``interval`` is calculated like ``it_interval.tv_sec + it_interval.tv_nsec * 1e-9``,
