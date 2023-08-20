@@ -3972,7 +3972,7 @@ class TimerfdTests(unittest.TestCase):
 
     def test_timerfd_ns_initval(self):
         one_sec_in_nsec = 10**9
-        limit_error = 10**6
+        limit_error = one_sec_in_nsec // 10**3
         fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
         self.assertNotEqual(fd, -1)
         self.addCleanup(os.close, fd)
@@ -3999,7 +3999,7 @@ class TimerfdTests(unittest.TestCase):
     def test_timerfd_ns_interval(self):
         size = 8  # read/write 8 bytes
         one_sec_in_nsec = 10**9
-        limit_error = 10**6
+        limit_error = one_sec_in_nsec // 10**3
         fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
         self.assertNotEqual(fd, -1)
         self.addCleanup(os.close, fd)
