@@ -3943,7 +3943,7 @@ class TimerfdTests(unittest.TestCase):
         self.assertLess(abs(value2 - value),  limit_error)
 
     def test_timerfd_interval(self):
-        size = 8  # read/write 8 bytes
+        size = 8  # read 8 bytes
         limit_error = 1e-3
         fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
         self.assertNotEqual(fd, -1)
@@ -3997,7 +3997,7 @@ class TimerfdTests(unittest.TestCase):
         self.assertLess(abs(value_ns2 - value_ns),  limit_error)
 
     def test_timerfd_ns_interval(self):
-        size = 8  # read/write 8 bytes
+        size = 8  # read 8 bytes
         one_sec_in_nsec = 10**9
         limit_error = one_sec_in_nsec // 10**3
         fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
