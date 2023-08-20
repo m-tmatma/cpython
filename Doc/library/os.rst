@@ -3885,7 +3885,7 @@ features:
    Returns a tuple `interval` which and `value` which is the time until next expiration.
    See man page :manpage:`timerfd_gettime(2)` for more information.
 
-   `interval` coresponds to `it_interval` in `struct itimerspec` and `value` coresponds to 
+   `interval` coresponds to `it_interval` in `struct itimerspec` and `value` coresponds to
    `it_value` in `struct itimerspec`. They are both in seconds unit and types are double.
 
    `interval` is calculated like `it_interval.tv_sec + it_interval.tv_nsec * 1e-9`,
@@ -3901,7 +3901,7 @@ features:
    Returns a tuple `interval` which and `value` which is the time until next expiration.
    See man page :manpage:`timerfd_gettime(2)` for more information.
 
-   `interval` coresponds to `it_interval` in `struct itimerspec` and `value` coresponds to 
+   `interval` coresponds to `it_interval` in `struct itimerspec` and `value` coresponds to
    `it_value` in `struct itimerspec`. They are both in nano second unit and types are long long.
 
    `interval` is calculated like `it_interval.tv_sec * 10**9 + it_interval.tv_nsec`,
@@ -3923,6 +3923,15 @@ features:
 
    Set :const:`O_NONBLOCK` status flag for new :func:`timerfd_create` file
    descriptor.
+
+   .. availability:: Linux >= 2.6.27 with glibc >= 2.8
+
+   .. versionadded:: 3.13
+
+.. data:: TFD_TIMER_ABSTIME
+
+   Set :const:`TFD_TIMER_ABSTIME` flags for :func:`timerfd_settime` or
+   :func:`timerfd_settime_ns`.
 
    .. availability:: Linux >= 2.6.27 with glibc >= 2.8
 
