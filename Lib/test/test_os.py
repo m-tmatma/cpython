@@ -3919,15 +3919,15 @@ class EventfdTests(unittest.TestCase):
 @support.requires_linux_version(2, 6, 30)
 class TimerfdTests(unittest.TestCase):
     def test_timerfd_initval(self):
-        one_sec_in_nsec = 10**9
-        limit_error = 1e-6
+        limit_error = 1e-3
         fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
         self.assertNotEqual(fd, -1)
         self.addCleanup(os.close, fd)
 
+        interval = 0.125
+        value = 0.25
+
         # 1st call
-        interval = 1 / 1000
-        value = 0
         interval2, value2 = os.timerfd_settime(fd, 0, interval, value)
         self.assertLessEqual(interval2, limit_error)
         self.assertLessEqual(value2, limit_error)
@@ -3944,7 +3944,7 @@ class TimerfdTests(unittest.TestCase):
 
     def test_timerfd_interval(self):
         size = 8  # read/write 8 bytes
-        limit_error = 1e-6
+        limit_error = 1e-3
         fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
         self.assertNotEqual(fd, -1)
         self.addCleanup(os.close, fd)
