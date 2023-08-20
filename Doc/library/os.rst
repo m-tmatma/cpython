@@ -3795,9 +3795,10 @@ features:
 
    Example::
 
+       import time
        import os
 
-       fd = os.timerfd_create(1, 0)
+       fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
 
        # timer interval 0.5 second
        inteval = 0.5
@@ -3818,9 +3819,10 @@ features:
 
    Example::
 
+       import time
        import os
 
-       fd = os.timerfd_create(1, 0)
+       fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
 
        # timer interval 0.5 second
        inteval_ns = 10**9 // 2
@@ -3842,7 +3844,7 @@ features:
 
    .. availability:: Linux >= 2.6.27 with glibc >= 2.8
 
-   .. versionadded:: 3.10
+   .. versionadded:: 3.13
 
 
 .. function:: timerfd_settime(fd, flags, interval, value)
@@ -3858,7 +3860,7 @@ features:
 
    .. availability:: Linux >= 2.6.27 with glibc >= 2.8
 
-   .. versionadded:: 3.10
+   .. versionadded:: 3.13
 
 
 
@@ -3875,7 +3877,7 @@ features:
 
    .. availability:: Linux >= 2.6.27 with glibc >= 2.8
 
-   .. versionadded:: 3.10
+   .. versionadded:: 3.13
 
 
 .. function:: timerfd_gettime(fd)
@@ -3891,7 +3893,7 @@ features:
 
    .. availability:: Linux >= 2.6.27 with glibc >= 2.8
 
-   .. versionadded:: 3.10
+   .. versionadded:: 3.13
 
 
 .. function:: timerfd_gettime_ns(fd)
@@ -3907,7 +3909,7 @@ features:
 
    .. availability:: Linux >= 2.6.27 with glibc >= 2.8
 
-   .. versionadded:: 3.10
+   .. versionadded:: 3.13
 
 .. data:: TFD_CLOEXEC
 
@@ -3915,7 +3917,7 @@ features:
 
    .. availability:: Linux >= 2.6.27
 
-   .. versionadded:: 3.10
+   .. versionadded:: 3.13
 
 .. data:: TFD_NONBLOCK
 
@@ -3924,7 +3926,7 @@ features:
 
    .. availability:: Linux >= 2.6.27
 
-   .. versionadded:: 3.10
+   .. versionadded:: 3.13
 
 
 Linux extended attributes
