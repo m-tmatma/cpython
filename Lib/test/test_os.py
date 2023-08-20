@@ -3918,6 +3918,58 @@ class EventfdTests(unittest.TestCase):
 @unittest.skipUnless(hasattr(os, 'timerfd_create'), 'requires os.timerfd_create')
 @support.requires_linux_version(2, 6, 30)
 class TimerfdTests(unittest.TestCase):
+    def test_timerfd_initval(self):
+        one_sec_in_nsec = 10**9
+        limit_error = 1e-6
+        fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
+        self.assertNotEqual(fd, -1)
+        self.addCleanup(os.close, fd)
+
+        # 1st call
+        interval = 1 / 1000
+        value = 0
+        interval2, value2 = os.timerfd_settime(fd, 0, interval, value)
+        self.assertLessEqual(interval2, limit_error)
+        self.assertLessEqual(value2, limit_error)
+
+        # 2nd call
+        interval2, value2 = os.timerfd_settime(fd, 0, interval, value)
+        self.assertLess(abs(interval2 - interval),  limit_error)
+        self.assertLess(abs(value2 - value),  limit_error)
+
+        # timerfd_gettime
+        interval2, value2 = os.timerfd_gettime(fd)
+        self.assertLess(abs(interval2 - interval),  limit_error)
+        self.assertLess(abs(value2 - value),  limit_error)
+
+    def test_timerfd_interval(self):
+        size = 8  # read/write 8 bytes
+        limit_error = 1e-6
+        fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
+        self.assertNotEqual(fd, -1)
+        self.addCleanup(os.close, fd)
+
+        # 0.5 second
+        interval = 0.5
+        # 1 second
+        value = 1
+
+        _, _ = os.timerfd_settime(fd, 0, interval, value)
+
+        # timerfd_gettime
+        interval2, value2 = os.timerfd_gettime(fd)
+        self.assertLess(abs(interval2 - interval),  limit_error)
+        self.assertLess(abs(value2 - value),  limit_error)
+
+        count = 3
+        t = time.perf_counter()
+        for _ in range(count):
+            _ = os.read(fd, size)
+        t = time.perf_counter() - t
+
+        total_time = value + interval * (count - 1)
+        self.assertLess(abs(t - total_time),  limit_error)
+
     def test_timerfd_ns_initval(self):
         one_sec_in_nsec = 10**9
         limit_error = 10**6

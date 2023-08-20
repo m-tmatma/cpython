@@ -10022,14 +10022,27 @@ os_times_impl(PyObject *module)
 
 #if defined(HAVE_TIMERFD_CREATE)
 #define ONE_SECOND_IN_NS (1000 * 1000 * 1000)
+#define EXTRACT_NSEC(value)  (long)( ( (double)(value) - (time_t)(value) ) * ONE_SECOND_IN_NS)
+#define MAKE_DOUBLE_SEC(sec, nsec) ( (double)(sec) + (double)(nsec) / ONE_SECOND_IN_NS )
+#define MAKE_NSEC(sec, nsec) ( (long long)(sec)* ONE_SECOND_IN_NS + (long long)(nsec) )
+
+static PyObject *
+build_itimerspec(const struct itimerspec* curr_value)
+{
+    return PyTuple_Pack(
+        2,
+        MAKE_DOUBLE_SEC(curr_value->it_interval.tv_sec, curr_value->it_interval.tv_nsec),
+        MAKE_DOUBLE_SEC(curr_value->it_value.tv_sec, curr_value->it_value.tv_nsec)
+    );
+}
 
 static PyObject *
 build_itimerspec_ns(const struct itimerspec* curr_value)
 {
     return PyTuple_Pack(
         2,
-        PyLong_FromLongLong((long long)curr_value->it_interval.tv_sec * ONE_SECOND_IN_NS + (long long)curr_value->it_interval.tv_nsec),
-        PyLong_FromLongLong((long long)curr_value->it_value.tv_sec * ONE_SECOND_IN_NS + (long long)curr_value->it_value.tv_nsec)
+        MAKE_NSEC(curr_value->it_interval.tv_sec, curr_value->it_interval.tv_nsec),
+        MAKE_NSEC(curr_value->it_value.tv_sec, curr_value->it_value.tv_nsec)
     );
 }
 
@@ -10055,6 +10068,62 @@ os_timerfd_create_impl(PyObject *module, int clockid, int flags)
         return PyErr_SetFromErrno(PyExc_OSError);
     }
     return PyLong_FromLong(fd);
+}
+
+
+/*[clinic input]
+os.timerfd_gettime
+
+    fd: fildes
+
+Read timerfd value in second.
+[clinic start generated code]*/
+
+static PyObject *
+os_timerfd_gettime_impl(PyObject *module, int fd)
+/*[clinic end generated code: output=ec5a94a66cfe6ab4 input=45fb127979311bbb]*/
+{
+    struct itimerspec curr_value;
+    int result;
+    Py_BEGIN_ALLOW_THREADS
+    result = timerfd_gettime(fd, &curr_value);
+    Py_END_ALLOW_THREADS
+    if (result == -1) {
+        return PyErr_SetFromErrno(PyExc_OSError);
+    }
+    return build_itimerspec(&curr_value);
+}
+
+/*[clinic input]
+os.timerfd_settime
+
+    fd: fildes
+    flags: int
+    it_interval: double
+    it_value: double
+
+Write timerfd value in second.
+[clinic start generated code]*/
+
+static PyObject *
+os_timerfd_settime_impl(PyObject *module, int fd, int flags,
+                        double it_interval, double it_value)
+/*[clinic end generated code: output=24030b5b2c5b539c input=821b9969235e3293]*/
+{
+    struct itimerspec new_value;
+    struct itimerspec old_value;
+    int result;
+    new_value.it_interval.tv_sec = (time_t)it_interval;
+    new_value.it_interval.tv_nsec = EXTRACT_NSEC(it_interval);
+    new_value.it_value.tv_sec = (time_t)it_value;
+    new_value.it_value.tv_nsec = EXTRACT_NSEC(it_value);
+    Py_BEGIN_ALLOW_THREADS
+    result = timerfd_settime(fd, flags, &new_value, &old_value);
+    Py_END_ALLOW_THREADS
+    if (result == -1) {
+        return PyErr_SetFromErrno(PyExc_OSError);
+    }
+    return build_itimerspec(&old_value);
 }
 
 /*[clinic input]
@@ -10111,6 +10180,12 @@ os_timerfd_settime_ns_impl(PyObject *module, int fd, int flags,
     }
     return build_itimerspec_ns(&old_value);
 }
+
+#undef ONE_SECOND_IN_NS
+#undef EXTRACT_NSEC
+#undef MAKE_DOUBLE_SEC
+#undef MAKE_NSEC
+
 #endif  /* HAVE_TIMERFD_CREATE */
 
 #ifdef HAVE_GETSID
@@ -16020,6 +16095,8 @@ static PyMethodDef posix_methods[] = {
     OS_SETNS_METHODDEF
     OS_UNSHARE_METHODDEF
     OS_TIMERFD_CREATE_METHODDEF
+    OS_TIMERFD_SETTIME_METHODDEF
+    OS_TIMERFD_GETTIME_METHODDEF
     OS_TIMERFD_SETTIME_NS_METHODDEF
     OS_TIMERFD_GETTIME_NS_METHODDEF
 

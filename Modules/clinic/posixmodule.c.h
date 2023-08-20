@@ -6058,6 +6058,156 @@ exit:
 
 #if defined(HAVE_TIMERFD_CREATE)
 
+PyDoc_STRVAR(os_timerfd_gettime__doc__,
+"timerfd_gettime($module, /, fd)\n"
+"--\n"
+"\n"
+"Read timerfd value in second.");
+
+#define OS_TIMERFD_GETTIME_METHODDEF    \
+    {"timerfd_gettime", _PyCFunction_CAST(os_timerfd_gettime), METH_FASTCALL|METH_KEYWORDS, os_timerfd_gettime__doc__},
+
+static PyObject *
+os_timerfd_gettime_impl(PyObject *module, int fd);
+
+static PyObject *
+os_timerfd_gettime(PyObject *module, PyObject *const *args, Py_ssize_t nargs, PyObject *kwnames)
+{
+    PyObject *return_value = NULL;
+    #if defined(Py_BUILD_CORE) && !defined(Py_BUILD_CORE_MODULE)
+
+    #define NUM_KEYWORDS 1
+    static struct {
+        PyGC_Head _this_is_not_used;
+        PyObject_VAR_HEAD
+        PyObject *ob_item[NUM_KEYWORDS];
+    } _kwtuple = {
+        .ob_base = PyVarObject_HEAD_INIT(&PyTuple_Type, NUM_KEYWORDS)
+        .ob_item = { &_Py_ID(fd), },
+    };
+    #undef NUM_KEYWORDS
+    #define KWTUPLE (&_kwtuple.ob_base.ob_base)
+
+    #else  // !Py_BUILD_CORE
+    #  define KWTUPLE NULL
+    #endif  // !Py_BUILD_CORE
+
+    static const char * const _keywords[] = {"fd", NULL};
+    static _PyArg_Parser _parser = {
+        .keywords = _keywords,
+        .fname = "timerfd_gettime",
+        .kwtuple = KWTUPLE,
+    };
+    #undef KWTUPLE
+    PyObject *argsbuf[1];
+    int fd;
+
+    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 1, 1, 0, argsbuf);
+    if (!args) {
+        goto exit;
+    }
+    if (!_PyLong_FileDescriptor_Converter(args[0], &fd)) {
+        goto exit;
+    }
+    return_value = os_timerfd_gettime_impl(module, fd);
+
+exit:
+    return return_value;
+}
+
+#endif /* defined(HAVE_TIMERFD_CREATE) */
+
+#if defined(HAVE_TIMERFD_CREATE)
+
+PyDoc_STRVAR(os_timerfd_settime__doc__,
+"timerfd_settime($module, /, fd, flags, it_interval, it_value)\n"
+"--\n"
+"\n"
+"Write timerfd value in second.");
+
+#define OS_TIMERFD_SETTIME_METHODDEF    \
+    {"timerfd_settime", _PyCFunction_CAST(os_timerfd_settime), METH_FASTCALL|METH_KEYWORDS, os_timerfd_settime__doc__},
+
+static PyObject *
+os_timerfd_settime_impl(PyObject *module, int fd, int flags,
+                        double it_interval, double it_value);
+
+static PyObject *
+os_timerfd_settime(PyObject *module, PyObject *const *args, Py_ssize_t nargs, PyObject *kwnames)
+{
+    PyObject *return_value = NULL;
+    #if defined(Py_BUILD_CORE) && !defined(Py_BUILD_CORE_MODULE)
+
+    #define NUM_KEYWORDS 4
+    static struct {
+        PyGC_Head _this_is_not_used;
+        PyObject_VAR_HEAD
+        PyObject *ob_item[NUM_KEYWORDS];
+    } _kwtuple = {
+        .ob_base = PyVarObject_HEAD_INIT(&PyTuple_Type, NUM_KEYWORDS)
+        .ob_item = { &_Py_ID(fd), &_Py_ID(flags), &_Py_ID(it_interval), &_Py_ID(it_value), },
+    };
+    #undef NUM_KEYWORDS
+    #define KWTUPLE (&_kwtuple.ob_base.ob_base)
+
+    #else  // !Py_BUILD_CORE
+    #  define KWTUPLE NULL
+    #endif  // !Py_BUILD_CORE
+
+    static const char * const _keywords[] = {"fd", "flags", "it_interval", "it_value", NULL};
+    static _PyArg_Parser _parser = {
+        .keywords = _keywords,
+        .fname = "timerfd_settime",
+        .kwtuple = KWTUPLE,
+    };
+    #undef KWTUPLE
+    PyObject *argsbuf[4];
+    int fd;
+    int flags;
+    double it_interval;
+    double it_value;
+
+    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 4, 4, 0, argsbuf);
+    if (!args) {
+        goto exit;
+    }
+    if (!_PyLong_FileDescriptor_Converter(args[0], &fd)) {
+        goto exit;
+    }
+    flags = PyLong_AsInt(args[1]);
+    if (flags == -1 && PyErr_Occurred()) {
+        goto exit;
+    }
+    if (PyFloat_CheckExact(args[2])) {
+        it_interval = PyFloat_AS_DOUBLE(args[2]);
+    }
+    else
+    {
+        it_interval = PyFloat_AsDouble(args[2]);
+        if (it_interval == -1.0 && PyErr_Occurred()) {
+            goto exit;
+        }
+    }
+    if (PyFloat_CheckExact(args[3])) {
+        it_value = PyFloat_AS_DOUBLE(args[3]);
+    }
+    else
+    {
+        it_value = PyFloat_AsDouble(args[3]);
+        if (it_value == -1.0 && PyErr_Occurred()) {
+            goto exit;
+        }
+    }
+    return_value = os_timerfd_settime_impl(module, fd, flags, it_interval, it_value);
+
+exit:
+    return return_value;
+}
+
+#endif /* defined(HAVE_TIMERFD_CREATE) */
+
+#if defined(HAVE_TIMERFD_CREATE)
+
 PyDoc_STRVAR(os_timerfd_gettime_ns__doc__,
 "timerfd_gettime_ns($module, /, fd)\n"
 "--\n"
@@ -11939,6 +12089,14 @@ exit:
     #define OS_TIMERFD_CREATE_METHODDEF
 #endif /* !defined(OS_TIMERFD_CREATE_METHODDEF) */
 
+#ifndef OS_TIMERFD_GETTIME_METHODDEF
+    #define OS_TIMERFD_GETTIME_METHODDEF
+#endif /* !defined(OS_TIMERFD_GETTIME_METHODDEF) */
+
+#ifndef OS_TIMERFD_SETTIME_METHODDEF
+    #define OS_TIMERFD_SETTIME_METHODDEF
+#endif /* !defined(OS_TIMERFD_SETTIME_METHODDEF) */
+
 #ifndef OS_TIMERFD_GETTIME_NS_METHODDEF
     #define OS_TIMERFD_GETTIME_NS_METHODDEF
 #endif /* !defined(OS_TIMERFD_GETTIME_NS_METHODDEF) */
@@ -12210,4 +12368,4 @@ exit:
 #ifndef OS_WAITSTATUS_TO_EXITCODE_METHODDEF
     #define OS_WAITSTATUS_TO_EXITCODE_METHODDEF
 #endif /* !defined(OS_WAITSTATUS_TO_EXITCODE_METHODDEF) */
-/*[clinic end generated code: output=709e8c2468726218 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=04d53f68edbc63c5 input=a9049054013a1b77]*/

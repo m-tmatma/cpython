@@ -501,6 +501,8 @@ struct _Py_global_strings {
         STRUCT_FOR_ID(iterations)
         STRUCT_FOR_ID(it_interval_ns)
         STRUCT_FOR_ID(it_value_ns)
+        STRUCT_FOR_ID(it_interval)
+        STRUCT_FOR_ID(it_value)
         STRUCT_FOR_ID(join)
         STRUCT_FOR_ID(jump)
         STRUCT_FOR_ID(keepends)
