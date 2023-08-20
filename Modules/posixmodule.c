@@ -10022,31 +10022,25 @@ os_times_impl(PyObject *module)
 
 #if defined(HAVE_TIMERFD_CREATE)
 #define ONE_SECOND_IN_NS (1000 * 1000 * 1000)
-#define EXTRACT_NSEC(value)  (long)( ( (double)(value) - (time_t)(value) ) * ONE_SECOND_IN_NS)
+#define EXTRACT_NSEC(value)  (long)( ( (double)(value) - (time_t)(value) ) * 1e9)
 
 static PyObject *
 build_itimerspec(const struct itimerspec* curr_value)
 {
-#ifndef nsdoubletime
-#define nsdoubletime(TV) ((double)((TV).tv_sec) + (TV).tv_nsec * 0.000000001)
-#endif
     return PyTuple_Pack(
         2,
-        nsdoubletime(curr_value->it_interval),
-        nsdoubletime(curr_value->it_value)
+        PyFloat_FromDouble((double)(curr_value->it_interval.tv_sec) + (double)curr_value->it_interval.tv_nsec * 1e-9),
+        PyFloat_FromDouble((double)(curr_value->it_value.tv_sec) + (double)curr_value->it_value.tv_nsec * 1e-9)
     );
 }
 
 static PyObject *
 build_itimerspec_ns(const struct itimerspec* curr_value)
 {
-#ifndef nstime
-#define nstime(TV) ((long long)((TV).tv_sec) * ONE_SECOND_IN_NS + (TV).tv_nsec)
-#endif
     return PyTuple_Pack(
         2,
-        nstime(curr_value->it_interval),
-        nstime(curr_value->it_value)
+        PyLong_FromLongLong((long long)curr_value->it_interval.tv_sec * ONE_SECOND_IN_NS + (long long)curr_value->it_interval.tv_nsec),
+        PyLong_FromLongLong((long long)curr_value->it_value.tv_sec * ONE_SECOND_IN_NS + (long long)curr_value->it_value.tv_nsec)
     );
 }
 
