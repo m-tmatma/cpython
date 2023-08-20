@@ -3915,7 +3915,7 @@ features:
 
    Set close-on-exec flag for new :func:`timerfd_create` file descriptor.
 
-   .. availability:: Linux >= 2.6.27
+   .. availability:: Linux >= 2.6.27 with glibc >= 2.8
 
    .. versionadded:: 3.13
 
@@ -3924,7 +3924,7 @@ features:
    Set :const:`O_NONBLOCK` status flag for new :func:`timerfd_create` file
    descriptor.
 
-   .. availability:: Linux >= 2.6.27
+   .. availability:: Linux >= 2.6.27 with glibc >= 2.8
 
    .. versionadded:: 3.13
 
