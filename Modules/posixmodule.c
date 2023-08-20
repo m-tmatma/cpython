@@ -10073,13 +10073,14 @@ os_timerfd_create_impl(PyObject *module, int clockid, int flags)
 os.timerfd_gettime
 
     fd: fildes
+    /
 
 Read timerfd value in second.
 [clinic start generated code]*/
 
 static PyObject *
 os_timerfd_gettime_impl(PyObject *module, int fd)
-/*[clinic end generated code: output=ec5a94a66cfe6ab4 input=45fb127979311bbb]*/
+/*[clinic end generated code: output=ec5a94a66cfe6ab4 input=30e69f73d8b73cb2]*/
 {
     struct itimerspec curr_value;
     int result;
@@ -10097,8 +10098,9 @@ os.timerfd_settime
 
     fd: fildes
     flags: int
-    it_interval: double
-    it_value: double
+    it_interval: double = 0.0
+    it_value: double = 0.0
+    /
 
 Write timerfd value in second.
 [clinic start generated code]*/
@@ -10106,7 +10108,7 @@ Write timerfd value in second.
 static PyObject *
 os_timerfd_settime_impl(PyObject *module, int fd, int flags,
                         double it_interval, double it_value)
-/*[clinic end generated code: output=24030b5b2c5b539c input=821b9969235e3293]*/
+/*[clinic end generated code: output=24030b5b2c5b539c input=24f0b47f6847a2c3]*/
 {
     struct itimerspec new_value;
     struct itimerspec old_value;
@@ -10128,13 +10130,14 @@ os_timerfd_settime_impl(PyObject *module, int fd, int flags,
 os.timerfd_gettime_ns
 
     fd: fildes
+    /
 
 Read timerfd value in ns
 [clinic start generated code]*/
 
 static PyObject *
 os_timerfd_gettime_ns_impl(PyObject *module, int fd)
-/*[clinic end generated code: output=580633a4465f39fe input=127da11e7d9799a0]*/
+/*[clinic end generated code: output=580633a4465f39fe input=03806d61a48536a9]*/
 {
     struct itimerspec curr_value;
     int result;
@@ -10152,8 +10155,9 @@ os.timerfd_settime_ns
 
     fd: fildes
     flags: int
-    it_interval_ns: long_long
-    it_value_ns: long_long
+    it_interval_ns: long_long = 0
+    it_value_ns: long_long = 0
+    /
 
 Write timerfd value.
 [clinic start generated code]*/
@@ -10161,7 +10165,7 @@ Write timerfd value.
 static PyObject *
 os_timerfd_settime_ns_impl(PyObject *module, int fd, int flags,
                            long long it_interval_ns, long long it_value_ns)
-/*[clinic end generated code: output=8c2801053004f896 input=b16b587650e08d39]*/
+/*[clinic end generated code: output=8c2801053004f896 input=715746fc69e55bc7]*/
 {
     struct itimerspec new_value;
     struct itimerspec old_value;
