@@ -3970,6 +3970,33 @@ class TimerfdTests(unittest.TestCase):
         total_time = value + interval * (count - 1)
         self.assertGreater(t, total_time)
 
+    def test_timerfd_select(self):
+        size = 8  # read 8 bytes
+        fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
+        self.assertNotEqual(fd, -1)
+        self.addCleanup(os.close, fd)
+
+        rfd, wfd, xfd = select.select([fd], [fd], [fd], 0)
+        self.assertEqual((rfd, wfd, xfd), ([], [], []))
+
+        # 0.125 second
+        interval = 0.125
+        # 0.25 second
+        value = 0.25
+
+        _, _ = os.timerfd_settime(fd, 0, interval, value)
+
+        count = 3
+        t = time.perf_counter()
+        for _ in range(count):
+            rfd, wfd, xfd = select.select([fd], [fd], [fd], value + interval)
+            self.assertEqual((rfd, wfd, xfd), ([fd], [], []))
+            _ = os.read(fd, size)
+        t = time.perf_counter() - t
+
+        total_time = value + interval * (count - 1)
+        self.assertGreater(t, total_time)
+
     def test_timerfd_ns_initval(self):
         one_sec_in_nsec = 10**9
         limit_error = one_sec_in_nsec // 10**3
@@ -4025,6 +4052,35 @@ class TimerfdTests(unittest.TestCase):
         total_time_ns = value_ns + interval_ns * (count - 1)
         self.assertGreater(t, total_time_ns)
 
+
+    def test_timerfd_ns_select(self):
+        size = 8  # read 8 bytes
+        one_sec_in_nsec = 10**9
+
+        fd = os.timerfd_create(time.CLOCK_REALTIME, 0)
+        self.assertNotEqual(fd, -1)
+        self.addCleanup(os.close, fd)
+
+        rfd, wfd, xfd = select.select([fd], [fd], [fd], 0)
+        self.assertEqual((rfd, wfd, xfd), ([], [], []))
+
+        # 0.125 second
+        interval_ns = one_sec_in_nsec // 8
+        # 0.25 second
+        value_ns = one_sec_in_nsec // 4
+
+        _, _ = os.timerfd_settime_ns(fd, 0, interval_ns, value_ns)
+
+        count = 3
+        t = time.perf_counter_ns()
+        for _ in range(count):
+            rfd, wfd, xfd = select.select([fd], [fd], [fd], (value_ns + interval_ns) / 1e9 )
+            self.assertEqual((rfd, wfd, xfd), ([fd], [], []))
+            _ = os.read(fd, size)
+        t = time.perf_counter_ns() - t
+
+        total_time_ns = value_ns + interval_ns * (count - 1)
+        self.assertGreater(t, total_time_ns)
 
 class OSErrorTests(unittest.TestCase):
     def setUp(self):
