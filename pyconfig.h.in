@@ -323,15 +323,6 @@
 /* Define if you have the 'eventfd' function. */
 #undef HAVE_EVENTFD
 
-/* Define if you have the 'timerfd_create' function. */
-#undef HAVE_TIMERFD_CREATE
-
-/* Define if you have the 'timerfd_settime' function. */
-#undef HAVE_TIMERFD_SETTIME
-
-/* Define if you have the 'timerfd_gettime' function. */
-#undef HAVE_TIMERFD_GETTIME
-
 /* Define to 1 if you have the `execv' function. */
 #undef HAVE_EXECV
 
@@ -1299,9 +1290,6 @@
 /* Define to 1 if you have the <sys/eventfd.h> header file. */
 #undef HAVE_SYS_EVENTFD_H
 
-/* Define to 1 if you have the <sys/timerfd.h> header file. */
-#undef HAVE_SYS_TIMERFD_H
-
 /* Define to 1 if you have the <sys/event.h> header file. */
 #undef HAVE_SYS_EVENT_H
 
@@ -1378,6 +1366,9 @@
 /* Define to 1 if you have the <sys/termio.h> header file. */
 #undef HAVE_SYS_TERMIO_H
 
+/* Define to 1 if you have the <sys/timerfd.h> header file. */
+#undef HAVE_SYS_TIMERFD_H
+
 /* Define to 1 if you have the <sys/times.h> header file. */
 #undef HAVE_SYS_TIMES_H
 
@@ -1419,6 +1410,15 @@
 
 /* Define to 1 if you have the `timegm' function. */
 #undef HAVE_TIMEGM
+
+/* Define if you have the 'timerfd_create' function. */
+#undef HAVE_TIMERFD_CREATE
+
+/* Define if you have the 'timerfd_gettime' function. */
+#undef HAVE_TIMERFD_GETTIME
+
+/* Define if you have the 'timerfd_settime' function. */
+#undef HAVE_TIMERFD_SETTIME
 
 /* Define to 1 if you have the `times' function. */
 #undef HAVE_TIMES
