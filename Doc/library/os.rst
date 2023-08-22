@@ -3938,6 +3938,16 @@ features:
    .. versionadded:: 3.13
 
 
+.. data:: TFD_TIMER_CANCEL_ON_SET
+
+   Set :const:`TFD_TIMER_CANCEL_ON_SET` flags for :func:`timerfd_settime` or
+   :func:`timerfd_settime_ns`.
+
+   .. availability:: Linux >= 2.6.27 with glibc >= 2.8
+
+   .. versionadded:: 3.13
+
+
 Linux extended attributes
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
